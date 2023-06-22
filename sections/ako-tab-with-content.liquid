@@ -1,0 +1,194 @@
+{% if section.settings.all_tabs != blank %}
+  {% assign all_tabs = section.settings.all_tabs | split: ',' %}
+{% endif %}
+
+<style>
+  .shopify-section--ako-tab-with-content .ako-tab-content {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .shopify-section--ako-tab-with-content .ako-tab-content img {
+    width: 100%;
+  }
+  .shopify-section--ako-tab-with-content .ako-tab-text {
+    font-family: var(--heading-font-family);
+    text-align: center;
+    margin: 2rem 0;
+  }
+  .shopify-section--ako-tab-with-content .ako-tab-text.right {
+    text-align: right;
+  }
+  .shopify-section--ako-tab-with-content .ako-tab-text.left {
+    text-align: left;
+  }
+  .shopify-section--ako-tab-with-content .ako-tab-text.center {
+    text-align: center;
+  }
+</style>
+
+<section class="section">
+  <div class="container">
+    <header class="section__header">
+      {%- if section.settings.title != blank or section.settings.subheading != blank or section.settings.content != blank -%}
+        <div class="text-container">
+          {%- if section.settings.title != blank -%}
+            <h3 class="heading h2">{{ section.settings.title }}</h3>
+          {%- endif -%}
+          {%- if section.settings.subheading != blank -%}
+            <h2 class="heading heading--small">{{ section.settings.subheading }}</h2>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </header>
+    {%- if all_tabs.size > 1 -%}
+      <tabs-nav class="tabs-nav tabs-nav--center tabs-nav--edge2edge">
+        <scrollable-content class="tabs-nav__scroller hide-scrollbar">
+          <div class="tabs-nav__scroller-inner">
+            <div class="tabs-nav__item-list">
+              {%- for tab in all_tabs -%}
+                {%- capture on_boarding_title -%}{{ 'general.onboarding.collection_title' | t }} {{ forloop.index }}{%- endcapture -%}
+
+                <button type="button" class="tabs-nav__item heading heading--small" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}" aria-controls="block-{{- tab -}}" {{ block.shopify_attributes }}>
+                  {{- tab | default: on_boarding_title -}}
+                </button>
+              {%- endfor -%}
+            </div>
+          </div>
+        </scrollable-content>
+      </tabs-nav>
+    {%- endif -%}
+
+    <div class="ako-tab-content-wrapper">
+      {%- for tab in all_tabs -%}
+        <div class="ako-tab-content" id="block-{{- tab -}}" {% unless forloop.first %}hidden{% endunless %}>
+          {% for block in section.blocks %}
+            {% if block.settings.belong_tab == tab and block.settings.content_order == 'img_first' %}
+            <img src="{{ block.settings.content_img | image_url }}" alt="{{ tab }} image showcase">
+            <div class="ako-tab-text {{ block.settings.text_alignment }}">
+              {% unless block.settings.block_heading == empty %}
+              <h3 class="heading h2">{{ block.settings.block_heading }}</h3>
+              {% endunless %}
+              {{ block.settings.content_para | newline_to_br }}
+            </div>
+            {% elsif block.settings.belong_tab == tab and block.settings.content_order == 'text_first' %}
+              <div class="ako-tab-text {{ block.settings.text_alignment }}">
+              {% unless block.settings.block_heading == empty %}
+              <h3 class="heading h2">{{ block.settings.block_heading }}</h3>
+              {% endunless %}
+              {{ block.settings.content_para | newline_to_br }}
+              </div>
+              <img src="{{ block.settings.content_img | image_url }}" alt="{{ tab }} image showcase">
+            {% endif %}
+          {% endfor %}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Ako Tab with Content",
+  "class": "shopify-section--ako-tab-with-content",
+  "max_blocks": 5,
+  "blocks": [
+    {
+      "type": "content",
+      "name": "Content Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "belong_tab",
+          "label": "Under Tab Name",
+          "info": "屬於哪個Tab Name"
+        },
+        {
+          "type": "image_picker",
+          "id": "content_img",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "block_heading",
+          "label": "Block Heading",
+          "default": "This is Block Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "content_para",
+          "label": "Text Content"
+        },
+        {
+          "type": "select",
+          "id": "content_order",
+          "label": "Content Order",
+          "info": "文字先還是圖片先",
+          "options": [
+            {
+              "value": "text_first",
+              "label": "Text First"
+            },
+            {
+              "value": "img_first",
+              "label": "Image First"
+            }
+          ],
+          "default": "img_first"
+        },
+        {
+          "type": "select",
+          "id": "text_alignment",
+          "label": "Text alignment",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "center"
+       }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "all_tabs",
+      "label": "Tab Names",
+      "info": "用逗號隔開每個Tab Name。逗號前後不要空格。",
+      "default": "品牌故事,品牌願景,永續材質"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Your subheading here"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ako Tab with Content",
+      "blocks": [
+        {
+          "type": "content"
+        }
+      ],
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

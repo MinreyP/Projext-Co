@@ -1,0 +1,99 @@
+{%- assign space_top = 40 -%}
+{%- assign space_bottom = 40 -%}
+{%- assign space_top_mb = 20 -%}
+{%- assign space_bottom_mb = 20 -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    {% unless space_top != 40 %}
+      {%- assign space_top = section.settings.space_top -%}
+    {% endunless %}
+    {% unless space_bottom != 40 %}
+      {%- assign space_bottom = section.settings.space_bottom -%}
+    {% endunless %}
+    {% unless space_top_mb != 20 %}
+      {%- assign space_top_mb = section.settings.space_top_mb -%}
+    {% endunless %}
+    {% unless space_bottom_mb != 20 %}
+      {%- assign space_bottom_mb = section.settings.space_bottom_mb -%}
+    {% endunless %}
+
+    --space-top: {{ space_top }}px;
+    --space-bottom: {{ space_bottom }}px;
+    --space-top-mb: {{ space_top_mb }}px;
+    --space-bottom-mb: {{ space_bottom_mb }}px;
+  }
+
+  .ako-spacing-block {
+    padding-top: var(--space-top);
+    padding-bottom: var(--space-bottom);
+  }
+
+  @media screen and (max-width: 741px) {
+    .ako-spacing-block {
+      padding-top: var(--space-top-mb);
+      padding-bottom: var(--space-bottom-mb);
+    }
+  }
+</style>
+
+<div class="ako-spacing-block"></div>
+
+{% schema %}
+{
+  "name": "Ako Spacing Tool",
+  "class": "shopify-section--ako-spacing-tool",
+  "settings": [
+    {
+      "type": "range",
+      "id": "space_top",
+      "min": 20,
+      "max": 160,
+      "step": 10,
+      "unit": "px",
+      "label": "Top Spacing",
+      "info": "離上方元素的距離",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "space_bottom",
+      "min": 20,
+      "max": 160,
+      "step": 10,
+      "unit": "px",
+      "label": "Bottom Spacing",
+      "info": "離下方元素的距離",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "space_top_mb",
+      "min": 10,
+      "max": 60,
+      "step": 10,
+      "unit": "px",
+      "label": "Top Spacing on Mobile",
+      "info": "手機版-離上方元素的距離",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "space_bottom_mb",
+      "min": 10,
+      "max": 60,
+      "step": 10,
+      "unit": "px",
+      "label": "Bottom Spacing on Mobile",
+      "info": "手機版-離下方元素的距離",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ako Spacing Tool",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}
